@@ -1,36 +1,21 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Scoop & Smile
 
-## Getting Started
+Next.js 16 ice-cream landing page with Supabase email/password authentication and a per-user saved favourite.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Create a Supabase project. In **Authentication → Providers → Email**, enable Email. If **Confirm email** remains enabled, users must click the confirmation email before signing in.
+2. Open **SQL Editor**, paste and run [`supabase/schema.sql`](./supabase/schema.sql). Its RLS policies allow each signed-in user to read and change only their own favourite.
+3. Copy `.env.example` to `.env.local`. In **Project Settings → API**, add the Project URL and **publishable key**. Do not add a service-role key anywhere in this app.
+4. Restart `npm run dev` after changing `.env.local`, then visit `http://localhost:3000`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Behaviour
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Register and login use Supabase Auth email/password.
+- Browser sessions persist using Supabase client storage.
+- Selecting a flavour while signed in upserts one private row in `favorite_ice_creams`.
+- Guests can browse, but choosing a favourite takes them to login.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in your host's environment settings before building. If email confirmation is enabled, add the deployed site URL under Supabase **Authentication → URL Configuration → Redirect URLs**. Never set a service-role key in a browser-facing variable.
